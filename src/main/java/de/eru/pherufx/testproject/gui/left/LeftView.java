@@ -3,14 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.eru.pherufx.testproject.test;
+package de.eru.pherufx.testproject.gui.left;
 
 import de.eru.pherufx.gui.JavaFXView;
+import javax.enterprise.context.ApplicationScoped;
 
 /**
  *
  * @author Phili_000
  */
-public class TestView extends JavaFXView {
-
+public class LeftView extends JavaFXView{
+    
 }

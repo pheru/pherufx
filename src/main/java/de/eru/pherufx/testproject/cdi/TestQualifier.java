@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.eru.pherufx.testproject;
+package de.eru.pherufx.testproject.cdi;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -21,6 +21,11 @@ import javax.inject.Qualifier;
 @Qualifier
 @Retention(RUNTIME)
 @Target({FIELD,METHOD, PARAMETER, TYPE})
-public @interface Zwei {
+public @interface TestQualifier {
 
+    DataType dataType();
+    
+    public enum DataType{
+        ONE, TWO, THREE
+    }
 }

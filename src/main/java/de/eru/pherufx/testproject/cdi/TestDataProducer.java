@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.eru.pherufx.testproject;
+package de.eru.pherufx.testproject.cdi;
 
+import de.eru.pherufx.testproject.data.TestData;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.New;
 import javax.enterprise.inject.Produces;
@@ -15,24 +16,33 @@ import javax.inject.Inject;
  * @author Phili_000
  */
 @ApplicationScoped
-public class TestInjectionProducer {
+public class TestDataProducer {
 
     @Inject
     @New
-    TestInjection t1;
+    TestData t1;
     @Inject
     @New
-    TestInjection t2;
+    TestData t2;
+    @Inject
+    @New
+    TestData t3;
 
     @Produces
-    @Eins
-    public TestInjection createEins() {
+    @TestQualifier(dataType = TestQualifier.DataType.ONE)
+    public TestData createOne() {
         return t1;
     }
 
     @Produces
-    @Zwei
-    public TestInjection createZwei() {
+    @TestQualifier(dataType = TestQualifier.DataType.TWO)
+    public TestData createTwo() {
         return t2;
+    }
+    
+    @Produces
+    @TestQualifier(dataType = TestQualifier.DataType.THREE)
+    public TestData createThree() {
+        return t3;
     }
 }

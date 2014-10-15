@@ -1,6 +1,5 @@
 package de.eru.pherufx.cdi;
 
-import de.eru.pherufx.testproject.Main;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javax.enterprise.util.AnnotationLiteral;

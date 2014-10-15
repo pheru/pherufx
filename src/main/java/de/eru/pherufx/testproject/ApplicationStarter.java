@@ -6,9 +6,10 @@
 package de.eru.pherufx.testproject;
 
 import de.eru.pherufx.cdi.StartApplication;
-import de.eru.pherufx.testproject.test.TestView;
+import de.eru.pherufx.testproject.gui.application.ApplicationView;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -16,13 +17,13 @@ import javax.inject.Inject;
  *
  * @author Phili_000
  */
-public class Starter {
+public class ApplicationStarter {
     
     @Inject
-    private TestView view;
+    private ApplicationView applicationView;
     
     public void launchJavaFXApplication(@Observes @StartApplication Stage s) {
-        s.setScene(new Scene(view.getView(), 500, 500));
+        s.setScene(new Scene(applicationView.getView(), 500, 500));
         s.show();
     }
 }

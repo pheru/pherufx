@@ -17,28 +17,37 @@ public abstract class JavaFXView {
     public static final String VIEW_ENDING = "view";
 
     @Inject
-    private FXMLLoader fxmlLoader;
+    private FXMLLoader loader;
 
     @PostConstruct
     private void init() throws IOException {
-        URL resource = getClass().getResource(getFXMLName());
-        fxmlLoader.setLocation(resource);
-        fxmlLoader.load();
+        URL resource = getClass().getResource(getViewName() + ".fxml");
+        loader.setLocation(resource);
+        loader.load();
+        addCSS();
     }
 
-    private String getFXMLName() {
-        String fxmlName = "";
-        fxmlName = getClass().getSimpleName().toLowerCase();
-        fxmlName = fxmlName.replace(VIEW_ENDING, "");
-        fxmlName = fxmlName.concat(".fxml");
-        return fxmlName;
+    private void addCSS() {
+        URL uri = getClass().getResource(getViewName() + ".css");
+        if (uri == null) {
+            return;
+        }
+        String css = uri.toExternalForm();
+        Parent parent = loader.getRoot();
+        parent.getStylesheets().add(css);
+    }
+    
+    private String getViewName(){
+        String viewName = getClass().getSimpleName().toLowerCase();
+        viewName = viewName.replace(VIEW_ENDING, "");
+        return viewName;
     }
 
     public Parent getView() {
-        return fxmlLoader.getRoot();
+        return loader.getRoot();
     }
 
     public Object getPresenter() {
-        return fxmlLoader.getController();
+        return loader.getController();
     }
 }

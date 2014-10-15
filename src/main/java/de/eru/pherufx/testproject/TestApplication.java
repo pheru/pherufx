@@ -12,10 +12,10 @@ import javafx.application.Application;
  *
  * @author Phili_000
  */
-public class Main extends PheruFXApplication{
+public class TestApplication extends PheruFXApplication{
  
     public static void main(String[] args){
-        Application.launch(Main.class, args);
+        Application.launch(TestApplication.class, args);
     }
     
 }
