@@ -5,7 +5,6 @@
  */
 package de.eru.pherufx.testproject.gui.application;
 
-import de.eru.pherufx.testproject.cdi.TestEvent;
 import de.eru.pherufx.testproject.gui.left.LeftView;
 import de.eru.pherufx.testproject.gui.right.RightPresenter;
 import de.eru.pherufx.testproject.gui.right.RightView;
@@ -15,9 +14,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.enterprise.event.Reception;
 import javax.inject.Inject;
 
 /**
@@ -32,7 +28,7 @@ public class ApplicationPresenter implements Initializable{
     private Label label;
     
     @Inject
-    private LeftView leftView;
+    private LeftView leftView; //TODO Als lokale Variable möglich?
     @Inject
     private RightView rightView;
     private RightPresenter rightPresenter;
@@ -49,7 +45,7 @@ public class ApplicationPresenter implements Initializable{
         rightPresenter.showHideButtons();
     }
     
-    private void eventFired(@Observes TestEvent event){
+//    private void eventFired(@Observes TestEvent event){
 //        label.setText("CDI-Event fired!");
-    }
+//    }
 }

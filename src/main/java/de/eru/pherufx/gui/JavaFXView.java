@@ -1,7 +1,6 @@
 package de.eru.pherufx.gui;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,6 +20,7 @@ public abstract class JavaFXView {
 
     @PostConstruct
     private void init() throws IOException {
+        System.out.println("Init " + getClass().getSimpleName()); //TODO Ausgabe entfernen
         URL resource = getClass().getResource(getViewName() + ".fxml");
         loader.setLocation(resource);
         loader.load();

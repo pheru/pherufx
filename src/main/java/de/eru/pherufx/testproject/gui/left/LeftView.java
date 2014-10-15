@@ -6,7 +6,6 @@
 package de.eru.pherufx.testproject.gui.left;
 
 import de.eru.pherufx.gui.JavaFXView;
-import javax.enterprise.context.ApplicationScoped;
 
 /**
  *

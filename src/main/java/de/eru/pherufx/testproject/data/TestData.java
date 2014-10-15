@@ -7,14 +7,11 @@ package de.eru.pherufx.testproject.data;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 
 /**
  *
  * @author Phili_000
  */
-@ApplicationScoped
 public class TestData {
     
     private final IntegerProperty value = new SimpleIntegerProperty(0);

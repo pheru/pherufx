@@ -9,7 +9,6 @@ import de.eru.pherufx.cdi.StartApplication;
 import de.eru.pherufx.testproject.gui.application.ApplicationView;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
