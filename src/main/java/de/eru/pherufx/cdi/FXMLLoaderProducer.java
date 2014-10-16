@@ -1,10 +1,10 @@
 package de.eru.pherufx.cdi;
 
 import javafx.fxml.FXMLLoader;
-import javafx.util.Callback;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
 
 /**
  *
@@ -18,11 +18,12 @@ public class FXMLLoaderProducer {
     @Produces
     public FXMLLoader createLoader() {
         FXMLLoader loader = new FXMLLoader();
-        loader.setControllerFactory(new Callback<Class<?>, Object>() {
-            @Override
-            public Object call(Class<?> param) {
-                return instance.select(param).get();
+        loader.setControllerFactory((Class<?> param) -> {
+            Object controller = instance.select(param).get();
+            if (controller instanceof TargetInstanceProxy) {
+                controller = ((TargetInstanceProxy<?>) controller).getTargetInstance();
             }
+            return controller;
         });
         return loader;
     }
