@@ -20,7 +20,6 @@ public abstract class JavaFXView {
 
     @PostConstruct
     private void init() throws IOException {
-        System.out.println("Init " + getClass().getSimpleName()); //TODO Ausgabe entfernen
         URL resource = getClass().getResource(getViewName() + ".fxml");
         loader.setLocation(resource);
         loader.load();

@@ -12,5 +12,5 @@ import de.eru.pherufx.gui.JavaFXView;
  * @author Phili_000
  */
 public class LeftView extends JavaFXView{
-    
+    //Convention Over Configuration
 }

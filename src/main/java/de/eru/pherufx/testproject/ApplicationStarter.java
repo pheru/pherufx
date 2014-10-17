@@ -17,10 +17,10 @@ import javax.inject.Inject;
  * @author Phili_000
  */
 public class ApplicationStarter {
-    
+
     @Inject
     private ApplicationView applicationView;
-    
+
     public void launchJavaFXApplication(@Observes @StartApplication Stage s) {
         s.setScene(new Scene(applicationView.getView(), 500, 500));
         s.show();
