@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.eru.pherufx.cdi;
 
 import javafx.application.Application.Parameters;
@@ -11,7 +6,7 @@ import javax.inject.Singleton;
 
 /**
  *
- * @author Phili_000
+ * @author Philipp Bruckner
  */
 @Singleton
 public class ApplicationParametersProvider {
