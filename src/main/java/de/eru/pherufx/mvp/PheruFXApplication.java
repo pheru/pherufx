@@ -1,4 +1,4 @@
-package de.eru.pherufx.cdi;
+package de.eru.pherufx.mvp;
 
 import javafx.application.Application;
 import javafx.stage.Stage;

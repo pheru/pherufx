@@ -1,4 +1,4 @@
-package de.eru.pherufx.gui;
+package de.eru.pherufx.mvp;
 
 import java.io.IOException;
 import java.net.URL;
@@ -25,7 +25,7 @@ public abstract class JavaFXView {
         loader.load();
         addCSS();
     }
-
+    
     private void addCSS() {
         URL uri = getClass().getResource(getViewName() + ".css");
         if (uri == null) {
