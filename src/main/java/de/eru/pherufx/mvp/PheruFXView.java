@@ -11,7 +11,7 @@ import javax.inject.Inject;
  *
  * @author Philipp Bruckner
  */
-public abstract class JavaFXView {
+public abstract class PheruFXView {
 
     public static final String VIEW_ENDING = "view";
 
