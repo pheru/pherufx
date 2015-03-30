@@ -19,11 +19,15 @@ public abstract class PheruFXView {
     private FXMLLoader loader;
 
     @PostConstruct
-    private void init() throws IOException {
-        URL resource = getClass().getResource(getViewName() + ".fxml");
-        loader.setLocation(resource);
-        loader.load();
-        addCSS();
+    private void init(){
+        try {
+            URL resource = getClass().getResource(getViewName() + ".fxml");
+            loader.setLocation(resource);
+            loader.load();
+            addCSS();
+        } catch (IOException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
     
     private void addCSS() {
