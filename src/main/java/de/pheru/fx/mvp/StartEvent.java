@@ -1,4 +1,4 @@
-package de.eru.pherufx.mvp;
+package de.pheru.fx.mvp;
 
 import javafx.event.Event;
 import javafx.event.EventType;

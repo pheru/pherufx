@@ -1,4 +1,4 @@
-package de.eru.pherufx.mvp;
+package de.pheru.fx.mvp;
 
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;

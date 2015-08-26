@@ -1,4 +1,4 @@
-package de.eru.pherufx.mvp;
+package de.pheru.fx.mvp;
 
 import java.io.IOException;
 import java.net.URL;

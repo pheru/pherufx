@@ -1,4 +1,4 @@
-package de.eru.pherufx.mvp;
+package de.pheru.fx.mvp;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
