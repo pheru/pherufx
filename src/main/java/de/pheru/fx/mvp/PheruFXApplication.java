@@ -1,56 +1,47 @@
 package de.pheru.fx.mvp;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import javax.enterprise.util.AnnotationLiteral;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
+
 /**
  *
  * @author Philipp Bruckner
  */
 public class PheruFXApplication extends Application {
 
-    private static EventHandler<StartEvent> startingHandler;
-    private static EventHandler<StartEvent> startFinishedHandler;
     private static WeldContainer weldContainer;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        StartEvent startEvent = new StartEvent();
-        startEvent.setPrimaryStage(primaryStage);
-        if (startingHandler != null) {
-            startingHandler.handle(startEvent);
-        }
-        weldContainer = new Weld().initialize();
-        weldContainer.instance().select(ApplicationParametersProvider.class).get().setParameters(getParameters());
-        weldContainer.event().select(Stage.class, new AnnotationLiteral<StartApplication>() {
-        }).fire(primaryStage);
-        if (startFinishedHandler != null) {
-            startFinishedHandler.handle(startEvent);
-        }
+        beforeStart();
+
+        //Damit wird sichergestellt, dass auch alle JavaFX-Aktivitäten in beforeStart() abgeschlossen sind
+        Platform.runLater(() -> {
+            StartEvent startEvent = new StartEvent();
+            startEvent.setPrimaryStage(primaryStage);
+            weldContainer = new Weld().initialize();
+            weldContainer.instance().select(ApplicationParametersProvider.class).get().setParameters(getParameters());
+            weldContainer.event().select(Stage.class, new AnnotationLiteral<StartApplication>() {
+                }).fire(primaryStage);
+
+            startFinished();
+        });
     }
-    
-    protected static WeldContainer getWeldContainer(){
+
+    public void beforeStart() {
+        //empty
+    }
+
+    public void startFinished() {
+        //empty
+    }
+
+    protected static WeldContainer getWeldContainer() {
         return weldContainer;
     }
-
-    public static EventHandler<StartEvent> getOnStarting() {
-        return startingHandler;
-    }
-
-    public static void setOnStarting(EventHandler<StartEvent> initializeHandler) {
-        PheruFXApplication.startingHandler = initializeHandler;
-    }
-
-    public static EventHandler<StartEvent> getOnStartFinished() {
-        return startFinishedHandler;
-    }
-
-    public static void setOnStartFinished(EventHandler<StartEvent> startFinishedHandler) {
-        PheruFXApplication.startFinishedHandler = startFinishedHandler;
-    }
-
 }
