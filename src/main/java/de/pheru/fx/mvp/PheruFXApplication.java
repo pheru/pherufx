@@ -22,10 +22,9 @@ public class PheruFXApplication extends Application {
 
         //Damit wird sichergestellt, dass auch alle JavaFX-Aktivitäten in beforeStart() abgeschlossen sind
         Platform.runLater(() -> {
-            StartEvent startEvent = new StartEvent();
-            startEvent.setPrimaryStage(primaryStage);
             weldContainer = new Weld().initialize();
             weldContainer.instance().select(ApplicationParametersProvider.class).get().setParameters(getParameters());
+            weldContainer.instance().select(PrimaryStageProvider.class).get().setPrimaryStage(primaryStage);
             weldContainer.event().select(Stage.class, new AnnotationLiteral<StartApplication>() {
                 }).fire(primaryStage);
 

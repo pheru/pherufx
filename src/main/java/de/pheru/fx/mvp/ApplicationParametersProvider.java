@@ -10,14 +10,15 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class ApplicationParametersProvider {
-	private Parameters parameters;
 
-	void setParameters(Parameters p) {
-		this.parameters = p;
-	}
-	
-	public @Produces Parameters getParameters() {
-		return parameters;
-	}
+    private Parameters parameters;
+
+    void setParameters(Parameters p) {
+        this.parameters = p;
+    }
+
+    @Produces
+    public Parameters getParameters() {
+        return parameters;
+    }
 }
-
