@@ -33,7 +33,8 @@ public class PheruFXApplication extends Application {
 
     /**
      * This method is called immediately at the beginning of the {@link #start(Stage)} method.
-     * The default implementation does nothing.<br/>
+     * The default implementation does nothing.
+     * <p>
      * This method is called on the JavaFX Application Thread.
      */
     public void beforeStart() {
@@ -42,7 +43,8 @@ public class PheruFXApplication extends Application {
 
     /**
      * This method is called after the weld-container is initialized.
-     * The default implementation does nothing.<br/>
+     * The default implementation does nothing.
+     * <p>
      * This method is NOT called on the JavaFX Application Thread.
      */
     public void load() {
@@ -51,7 +53,8 @@ public class PheruFXApplication extends Application {
 
     /**
      * This method is called after the {@link StartApplication} event is fired.
-     * The default implementation does nothing.<br/>
+     * The default implementation does nothing.
+     * <p>
      * This method is called on the JavaFX Application Thread.
      */
     public void afterStart() {

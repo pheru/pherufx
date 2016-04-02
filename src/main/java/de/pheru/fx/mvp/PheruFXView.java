@@ -1,14 +1,16 @@
 package de.pheru.fx.mvp;
 
-import java.io.IOException;
-import java.net.URL;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.io.IOException;
+import java.net.URL;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
- *
  * @author Philipp Bruckner
  */
 public abstract class PheruFXView {
@@ -19,17 +21,23 @@ public abstract class PheruFXView {
     private FXMLLoader loader;
 
     @PostConstruct
-    private void init(){
+    private void init() {
         try {
-            URL resource = getClass().getResource(getViewName() + ".fxml");
-            loader.setLocation(resource);
+            URL location = getClass().getResource(getViewName() + ".fxml");
+            try {
+                ResourceBundle resources = ResourceBundle.getBundle(getClass().getPackage().getName() + "." + getViewName());
+                loader.setResources(resources);
+            } catch (MissingResourceException e) {
+                // do nothing
+            }
+            loader.setLocation(location);
             loader.load();
             addCSS();
         } catch (IOException ex) {
             throw new IllegalStateException(ex);
         }
     }
-    
+
     private void addCSS() {
         URL uri = getClass().getResource(getViewName() + ".css");
         if (uri == null) {
@@ -39,8 +47,8 @@ public abstract class PheruFXView {
         Parent parent = loader.getRoot();
         parent.getStylesheets().add(css);
     }
-    
-    private String getViewName(){
+
+    private String getViewName() {
         String viewName = getClass().getSimpleName().toLowerCase();
         viewName = viewName.replace(VIEW_ENDING, "");
         return viewName;
