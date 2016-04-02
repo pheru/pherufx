@@ -23,18 +23,21 @@ public abstract class PheruFXView {
     @PostConstruct
     private void init() {
         try {
-            URL location = getClass().getResource(getViewName() + ".fxml");
-            try {
-                ResourceBundle resources = ResourceBundle.getBundle(getClass().getPackage().getName() + "." + getViewName());
-                loader.setResources(resources);
-            } catch (MissingResourceException e) {
-                // do nothing
-            }
-            loader.setLocation(location);
+            loader.setLocation(getClass().getResource(getViewName() + ".fxml"));
+            addResourceBundle();
             loader.load();
             addCSS();
         } catch (IOException ex) {
             throw new IllegalStateException(ex);
+        }
+    }
+
+    private void addResourceBundle() {
+        try {
+            ResourceBundle resources = ResourceBundle.getBundle(getClass().getPackage().getName() + "." + getViewName());
+            loader.setResources(resources);
+        } catch (MissingResourceException e) {
+            // do nothing
         }
     }
 
