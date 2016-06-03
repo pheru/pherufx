@@ -27,8 +27,8 @@ public abstract class PheruFXView {
             addResourceBundle();
             loader.load();
             addCSS();
-        } catch (IOException ex) {
-            throw new IllegalStateException(ex);
+        } catch (IllegalStateException | IOException ex) {
+            throw new IllegalStateException("Could not load " + getClass().getName(), ex);
         }
     }
 
