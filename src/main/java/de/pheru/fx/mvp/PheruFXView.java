@@ -1,24 +1,28 @@
 package de.pheru.fx.mvp;
 
+import de.pheru.fx.mvp.exceptions.ViewInitializationException;
+import de.pheru.fx.mvp.qualifiers.GlobalStylesheets;
+import de.pheru.fx.mvp.qualifiers.PheruFXMLLoader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.io.IOException;
-import java.net.URL;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-/**
- * @author Philipp Bruckner
- */
 public abstract class PheruFXView {
 
-    public static final String VIEW_ENDING = "view";
+    private static final String VIEW_ENDING = "view";
 
     @Inject
+    @PheruFXMLLoader
     private FXMLLoader loader;
+    @Inject
+    @GlobalStylesheets
+    private List<String> globalStylesheets;
 
     @PostConstruct
     private void init() {
@@ -27,28 +31,36 @@ public abstract class PheruFXView {
             addResourceBundle();
             loader.load();
             addCSS();
-        } catch (IllegalStateException | IOException ex) {
-            throw new IllegalStateException("Could not load " + getClass().getName(), ex);
+        } catch (final IllegalStateException | IOException e) {
+            throw new ViewInitializationException("Could not initialize " + getClass().getName() + ": " + e.getMessage(), e);
         }
     }
 
     private void addResourceBundle() {
         try {
-            ResourceBundle resources = ResourceBundle.getBundle(getClass().getPackage().getName() + "." + getViewName());
+            final ResourceBundle resources = ResourceBundle.getBundle(getClass().getPackage().getName() + "." + getViewName());
             loader.setResources(resources);
-        } catch (MissingResourceException e) {
+        } catch (final MissingResourceException e) {
             // do nothing
         }
     }
 
     private void addCSS() {
-        URL uri = getClass().getResource(getViewName() + ".css");
-        if (uri == null) {
-            return;
+        final Parent parent = loader.getRoot();
+        parent.getStylesheets().addAll(globalStylesheets);
+
+        final String[] additionalStylesheets = CssUtil.getAdditionalStylesheetsByAnnotation(getClass());
+        for (final String additionalStylesheet : additionalStylesheets) {
+            final String stylesheet = CssUtil.getStylesheet(getClass(), additionalStylesheet);
+            if (stylesheet == null) {
+                throw new ViewInitializationException("No stylesheet found for \"" + additionalStylesheet + "\"!");
+            }
+            parent.getStylesheets().add(stylesheet);
         }
-        String css = uri.toExternalForm();
-        Parent parent = loader.getRoot();
-        parent.getStylesheets().add(css);
+        final String stylesheet = CssUtil.getStylesheet(getClass(), getViewName());
+        if (stylesheet != null) {
+            parent.getStylesheets().add(stylesheet);
+        }
     }
 
     private String getViewName() {
