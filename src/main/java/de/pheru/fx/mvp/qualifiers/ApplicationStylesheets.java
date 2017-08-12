@@ -1,11 +1,14 @@
-package de.pheru.fx.mvp.annotations;
+package de.pheru.fx.mvp.qualifiers;
 
+import javax.inject.Qualifier;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE})
+@Qualifier
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SetStylesheetAsUserAgentStylesheet {
+public @interface ApplicationStylesheets {
 }
+

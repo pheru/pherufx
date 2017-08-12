@@ -1,98 +1,94 @@
 package de.pheru.fx.mvp;
 
-import de.pheru.fx.mvp.annotations.SetStylesheetAsUserAgentStylesheet;
-import de.pheru.fx.mvp.providers.StylesheetProvider;
-import de.pheru.fx.mvp.qualifiers.StartApplication;
-import de.pheru.fx.mvp.exceptions.ApplicationInitializationException;
 import de.pheru.fx.mvp.providers.ParametersProvider;
 import de.pheru.fx.mvp.providers.StageProvider;
+import de.pheru.fx.mvp.providers.StylesheetProvider;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
-import javax.enterprise.util.AnnotationLiteral;
-import java.util.ArrayList;
 import java.util.List;
 
-public class PheruFXApplication extends Application {
+public abstract class PheruFXApplication extends Application {
+
+    protected abstract Class<? extends PheruFXEntryPoint> getEntryPointClass();
 
     private WeldContainer weldContainer;
+    private PheruFXEntryPoint entryPoint;
 
     @Override
-    public void start(final Stage primaryStage) throws Exception {
-        beforeStart();
-        new Thread(() -> {
-            final List<String> stylesheets = loadStylesheets();
+    public final void start(final Stage primaryStage) throws Exception {
+        final List<String> stylesheets = CssUtil.loadStylesheets(getClass(), getClass().getSimpleName());
+        final Stage splashStage = createSplashStage();
+
+        if (splashStage != null) {
+            if (splashStage.getScene() != null) {
+                splashStage.getScene().getStylesheets().addAll(stylesheets);
+            }
+            splashStage.show();
+        }
+
+        final Thread thread = new Thread(() -> {
             weldContainer = new Weld().initialize();
             weldContainer.instance().select(ParametersProvider.class).get().setApplicationParameters(getParameters());
             weldContainer.instance().select(StageProvider.class).get().setPrimaryStage(primaryStage);
-            weldContainer.instance().select(StylesheetProvider.class).get().setGlobalStylesheets(stylesheets);
-            load();
+            weldContainer.instance().select(StylesheetProvider.class).get().setApplicationStylesheets(stylesheets);
+
+            final Class<? extends PheruFXLoader> loaderClass = getLoaderClass();
+            if (loaderClass != null) {
+                final PheruFXLoader loader = weldContainer.instance().select(loaderClass).get();
+                if (splashStage instanceof UpdateableSplashStage) {
+                    loader.setUpdatableSplashStage((UpdateableSplashStage) splashStage);
+                }
+                try {
+                    loader.load();
+                } catch (final Exception e) {
+                    Platform.exit();
+                    throw new RuntimeException("Exception in PheruFXLoader load method", e);
+                }
+            }
+            entryPoint = weldContainer.instance().select(getEntryPointClass()).get();
             Platform.runLater(() -> {
-                weldContainer.event().select(Stage.class, new AnnotationLiteral<StartApplication>() {
-                }).fire(primaryStage);
-                afterStart();
+                try {
+                    entryPoint.start(primaryStage);
+                } catch (final Exception e) {
+                    Platform.exit();
+                    throw new RuntimeException("Exception in PheruFXEntryPoint start method", e);
+                }
+                if (splashStage != null) {
+                    splashStage.hide();
+                }
             });
-        }).start();
+        }, "PheruFX Starter Thread");
+        thread.start();
     }
 
-    private List<String> loadStylesheets() {
-        final List<String> stylesheets = new ArrayList<>();
-
-        final String[] additionalStylesheets = CssUtil.getAdditionalStylesheetsByAnnotation(getClass());
-        for (final String additionalStylesheet : additionalStylesheets) {
-            final String stylesheet = CssUtil.getStylesheet(getClass(), additionalStylesheet);
-            if (stylesheet == null) {
-                throw new ApplicationInitializationException("No stylesheet found for \"" + additionalStylesheet + "\"!");
-            }
-            stylesheets.add(stylesheet);
+    @Override
+    public final void stop() throws Exception {
+        try {
+            entryPoint.stop();
+        } finally {
+            weldContainer.shutdown();
         }
-
-        final String stylesheet = CssUtil.getStylesheet(getClass(), getClass().getSimpleName());
-        final SetStylesheetAsUserAgentStylesheet setStylesheetAsUserAgentStylesheet = getClass().getAnnotation(SetStylesheetAsUserAgentStylesheet.class);
-        if (setStylesheetAsUserAgentStylesheet != null) {
-            if (stylesheet == null) {
-                throw new ApplicationInitializationException("Failed so set user agent stylesheet: No stylesheet found for \"" + getClass().getSimpleName() + "\"!");
-            }
-            setUserAgentStylesheet(stylesheet);
-        } else {
-            if (stylesheet != null) {
-                stylesheets.add(stylesheet);
-            }
-        }
-        return stylesheets;
     }
 
     /**
-     * This method is called immediately at the beginning of the {@link #start(Stage)} method.
-     * The default implementation does nothing.
-     * <p>
-     * This method is called on the JavaFX Application Thread.
+     * TODO
+     * The default implementation provided by the PheruFXApplication class returns null.
      */
-    public void beforeStart() {
-        //empty by default
+    protected Class<? extends PheruFXLoader> getLoaderClass() {
+        return null;
     }
 
-    /**
-     * This method is called after the weld-container has been initialized.
-     * The default implementation does nothing.
-     * <p>
-     * This method is NOT called on the JavaFX Application Thread.
-     */
-    public void load() {
-        //empty by default
-    }
+    //TODO Hinweis auf updateable interface
 
     /**
-     * This method is called after the {@link StartApplication} event has been fired.
-     * The default implementation does nothing.
-     * <p>
-     * This method is called on the JavaFX Application Thread.
+     * The default implementation provided by the PheruFXApplication class returns null.
      */
-    public void afterStart() {
-        //empty by default
+    protected Stage createSplashStage() {
+        return null;
     }
 
     protected WeldContainer getWeldContainer() {

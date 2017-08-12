@@ -1,7 +1,7 @@
 package de.pheru.fx.mvp;
 
 import de.pheru.fx.mvp.exceptions.ViewInitializationException;
-import de.pheru.fx.mvp.qualifiers.GlobalStylesheets;
+import de.pheru.fx.mvp.qualifiers.ApplicationStylesheets;
 import de.pheru.fx.mvp.qualifiers.PheruFXMLLoader;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,8 +21,8 @@ public abstract class PheruFXView {
     @PheruFXMLLoader
     private FXMLLoader loader;
     @Inject
-    @GlobalStylesheets
-    private List<String> globalStylesheets;
+    @ApplicationStylesheets
+    private List<String> applicationStylesheets;
 
     @PostConstruct
     private void init() {
@@ -36,6 +36,14 @@ public abstract class PheruFXView {
         }
     }
 
+    public Parent getView() {
+        return loader.getRoot();
+    }
+
+    public Object getPresenter() {
+        return loader.getController();
+    }
+
     private void addResourceBundle() {
         try {
             final ResourceBundle resources = ResourceBundle.getBundle(getClass().getPackage().getName() + "." + getViewName());
@@ -47,20 +55,8 @@ public abstract class PheruFXView {
 
     private void addCSS() {
         final Parent parent = loader.getRoot();
-        parent.getStylesheets().addAll(globalStylesheets);
-
-        final String[] additionalStylesheets = CssUtil.getAdditionalStylesheetsByAnnotation(getClass());
-        for (final String additionalStylesheet : additionalStylesheets) {
-            final String stylesheet = CssUtil.getStylesheet(getClass(), additionalStylesheet);
-            if (stylesheet == null) {
-                throw new ViewInitializationException("No stylesheet found for \"" + additionalStylesheet + "\"!");
-            }
-            parent.getStylesheets().add(stylesheet);
-        }
-        final String stylesheet = CssUtil.getStylesheet(getClass(), getViewName());
-        if (stylesheet != null) {
-            parent.getStylesheets().add(stylesheet);
-        }
+        parent.getStylesheets().addAll(applicationStylesheets);
+        parent.getStylesheets().addAll(CssUtil.loadStylesheets(getClass(), getViewName()));
     }
 
     private String getViewName() {
@@ -69,11 +65,4 @@ public abstract class PheruFXView {
         return viewName;
     }
 
-    public Parent getView() {
-        return loader.getRoot();
-    }
-
-    public Object getPresenter() {
-        return loader.getController();
-    }
 }

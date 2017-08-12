@@ -1,8 +1,11 @@
 package de.pheru.fx.mvp;
 
 import de.pheru.fx.mvp.annotations.AdditionalStylesheets;
+import de.pheru.fx.mvp.exceptions.ApplicationInitializationException;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 final class CssUtil {
 
@@ -10,7 +13,26 @@ final class CssUtil {
         // Utility-Klasse
     }
 
-    public static String getStylesheet(final Class<?> clazz, final String name){
+    public static List<String> loadStylesheets(final Class<?> clazz, final String name) {
+        final List<String> stylesheets = new ArrayList<>();
+
+        final String stylesheet = CssUtil.getStylesheet(clazz, name);
+        if (stylesheet != null) {
+            stylesheets.add(stylesheet);
+        }
+
+        final String[] additionalStylesheetsByAnnotation = CssUtil.getAdditionalStylesheetsByAnnotation(clazz);
+        for (final String additionalStylesheetByAnnotation : additionalStylesheetsByAnnotation) {
+            final String additionalStylesheet = CssUtil.getStylesheet(clazz, additionalStylesheetByAnnotation);
+            if (additionalStylesheet == null) {
+                throw new ApplicationInitializationException("No stylesheet found for \"" + additionalStylesheetByAnnotation + "\"!");
+            }
+            stylesheets.add(additionalStylesheet);
+        }
+        return stylesheets;
+    }
+
+    private static String getStylesheet(final Class<?> clazz, final String name) {
         final URL uri;
         if (name.endsWith(".css")) {
             uri = clazz.getResource(name);
@@ -23,12 +45,11 @@ final class CssUtil {
         return uri.toExternalForm();
     }
 
-    public static String[] getAdditionalStylesheetsByAnnotation(final Class<?> clazz){
+    private static String[] getAdditionalStylesheetsByAnnotation(final Class<?> clazz) {
         final AdditionalStylesheets annotation = clazz.getAnnotation(AdditionalStylesheets.class);
         if (annotation != null) {
             return annotation.value();
-        }else{
-            return new String[0];
         }
+        return new String[0];
     }
 }
