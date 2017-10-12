@@ -70,7 +70,9 @@ public abstract class PheruFXApplication extends Application {
         try {
             entryPoint.stop();
         } finally {
-            weldContainer.shutdown();
+            if (weldContainer != null) {
+                weldContainer.shutdown();
+            }
         }
     }
 
