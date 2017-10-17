@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public abstract class PheruFXView {
+public abstract class PheruFXView<T> {
 
     private static final String VIEW_ENDING = "view";
 
@@ -40,7 +40,7 @@ public abstract class PheruFXView {
         return loader.getRoot();
     }
 
-    public Object getPresenter() {
+    public T getPresenter() {
         return loader.getController();
     }
 
