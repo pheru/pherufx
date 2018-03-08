@@ -20,7 +20,7 @@ public abstract class PheruFXApplication extends Application {
 
     @Override
     public final void start(final Stage primaryStage) throws Exception {
-        final List<String> stylesheets = CssUtil.loadStylesheets(getClass(), getClass().getSimpleName());
+        final List<String> stylesheets = CssUtil.loadStylesheets(getClass(), getClass().getSimpleName().toLowerCase());
         final Stage splashStage = createSplashStage();
 
         if (splashStage != null) {
