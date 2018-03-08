@@ -77,14 +77,11 @@ public abstract class PheruFXApplication extends Application {
     }
 
     /**
-     * TODO
      * The default implementation provided by the PheruFXApplication class returns null.
      */
     protected Class<? extends PheruFXLoader> getLoaderClass() {
         return null;
     }
-
-    //TODO Hinweis auf updateable interface
 
     /**
      * The default implementation provided by the PheruFXApplication class returns null.
