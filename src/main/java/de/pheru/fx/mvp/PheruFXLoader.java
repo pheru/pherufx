@@ -3,6 +3,9 @@ package de.pheru.fx.mvp;
 import de.pheru.fx.mvp.exceptions.ApplicationInitializationException;
 import javafx.application.Platform;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
 public abstract class PheruFXLoader {
 
     private UpdateableSplashStage splashStage;
@@ -10,18 +13,29 @@ public abstract class PheruFXLoader {
     public abstract void load() throws Exception;
 
     protected void updateMessage(final String message) {
-        checkIfSplashStageIsUpdateable();
-        Platform.runLater(() -> splashStage.loadingMessageUpdated(message));
+        callBlockingUpdateFunction(() -> splashStage.loadingMessageUpdated(message));
     }
 
     protected void updateProgress(final double workDone, final double max) {
-        checkIfSplashStageIsUpdateable();
-        Platform.runLater(() -> splashStage.loadingProgressUpdated(workDone, max));
+        callBlockingUpdateFunction(() -> splashStage.loadingProgressUpdated(workDone, max));
     }
 
     protected void fail(final String message, final Throwable throwable) {
+        callBlockingUpdateFunction(() -> splashStage.loadingFailed(message, throwable));
+    }
+
+    private void callBlockingUpdateFunction(final Runnable runnable) {
         checkIfSplashStageIsUpdateable();
-        Platform.runLater(() -> splashStage.loadingFailed(message, throwable));
+        final FutureTask<Void> futureTask = new FutureTask<>(() -> {
+            runnable.run();
+            return null;
+        });
+        Platform.runLater(futureTask);
+        try {
+            futureTask.get();
+        } catch (final InterruptedException | ExecutionException ignored) {
+            // Nothing to do
+        }
     }
 
     private void checkIfSplashStageIsUpdateable() {
